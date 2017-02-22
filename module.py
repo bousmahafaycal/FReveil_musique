@@ -15,24 +15,30 @@ def start(arguments):
 	# Le code qui suit jusqu'à #FIN est un code pour recuperer l'exclusivité pour utiliser l'audio au sein du FReveil.
 	# Il suffit d'insérer votre code utilisant l'audio à l'endroit indiquer.
 	# A chaque fois que vous souhaitez utiliser l'audio vous devriez utiliser ce code :
-	if len(arguments) != 0:
+	if len(arguments) > 1:
 		id = requestAudio()
+		#print("id musique : "+str(id))
 		# Votre code utilisant l'audio
-		os.system("mpg321 -q  {} && touch musique.f &".format(arguments[0]))
+		#print("startMusique")
+		os.system("mpg321 -q  {} && touch musique.f &".format(arguments[1]))
 		continuer = True
 		conf = Config()
 		while continuer:
 			#print("boucle")
+
 			conf.openConfig()
+			#print("conf.lastId boucle : "+str(conf.lastId))
 			continuer = not Outils.testPresence("musique.f")
 			sleep(1)
 			if conf.bouton :
 				continuer = False
 				#print("Terminus killall")
-				os.system("killall mpg321")
+				
 
 		#print("Sortie de la boucle")
+		os.system("killall mpg321")
 		Outils.supprimerFichier("musique.f")
+
 
 		giveRequestAudio(id)
 
@@ -42,11 +48,12 @@ def start(arguments):
 
 
 
-
 def giveRequestAudio(id):
 	# Lache l'autorisation d'utiliser l'audio pour qu'un autre module puisse l'utiliser.
 	conf = Config ()
+	#print("conf.lastId bis : "+str(conf.lastId))
 	conf.setLockAudio(False,id)
+	#print("conf.lastIdbisbis : "+str(conf.lastId))
 
 def requestAudio(): 
 	# Demande l'autoristion d'utiliser l'audio. Cette méthode est bloquante jusqu'à ce que l'autorisation soit donnée.
